@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About:Blank Embedder</title>
+</head>
+<body>
+    <h1>About:Blank Embedder</h1>
+    <textarea id="content" placeholder="Enter HTML/JS to embed"></textarea>
+    <button onclick="embed()">Embed</button>
+
+    <script>
+        function embed() {
+            let newWindow = window.open("about:blank");
+            let content = document.getElementById("content").value;
+            newWindow.document.write(content);
+            newWindow.document.close();
+        }
+    </script>
+</body>
+</html>
