@@ -3,28 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About:Blank Website Embeder</title>
+    <title>About:Blank Embedder</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 50px;
+            background-color: #f4f4f4;
         }
         input {
             width: 300px;
             padding: 10px;
             margin: 10px;
             font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
         button {
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <h1>About:Blank Website Embeder</h1>
+    <h1>About:Blank Website Embedder</h1>
     <input type="text" id="urlInput" placeholder="Enter Website URL">
     <button onclick="embedWebsite()">Embed Website</button>
 
@@ -42,7 +52,10 @@
                 url = "https://" + url;
             }
 
-            // Open a new blank tab
+            // Use Cloudflare Worker proxy
+            let proxyUrl = "https://your-cloudflare-worker-subdomain.workers.dev/?url=" + encodeURIComponent(url);
+
+            // Open in about:blank
             let newWindow = window.open("about:blank");
 
             if (!newWindow) {
@@ -50,9 +63,7 @@
                 return;
             }
 
-            // Create iframe to load the page
             let iframe = newWindow.document.createElement("iframe");
-
             iframe.style.position = "absolute";
             iframe.style.top = "0";
             iframe.style.left = "0";
@@ -60,17 +71,14 @@
             iframe.style.height = "100%";
             iframe.style.border = "none";
 
-            // Try to load the page normally, or fallback to Cloudflare Worker if blocked
-            iframe.src = url;
+            iframe.src = proxyUrl;
 
             newWindow.document.body.appendChild(iframe);
+        }
+    </script>
+</body>
+</html>
 
-            // Error handling in case site blocks embedding
-            setTimeout(() => {
-                if (iframe.contentWindow.length === 0) {
-                    newWindow.alert("This site cannot be embedded. Try another website.");
-                    newWindow.close();
-                }
             }, 3000);
         }
     </script>
