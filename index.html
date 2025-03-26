@@ -52,8 +52,8 @@
                 url = "https://" + url;
             }
 
-            // Use Cloudflare Worker proxy
-            let proxyUrl = "https://your-cloudflare-worker-subdomain.workers.dev/?url=" + encodeURIComponent(url);
+            // Use your Cloudflare Worker to proxy the request
+            let proxyUrl = "https://broken-wind-2e35.uraverageopdoge.workers.dev/?url=" + encodeURIComponent(url);
 
             // Open in about:blank
             let newWindow = window.open("about:blank");
@@ -74,12 +74,6 @@
             iframe.src = proxyUrl;
 
             newWindow.document.body.appendChild(iframe);
-        }
-    </script>
-</body>
-</html>
-
-            }, 3000);
         }
     </script>
 </body>
