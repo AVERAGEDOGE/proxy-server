@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About:Blank Redirector</title>
+    <title>About:Blank Game Embeder</title>
 </head>
 <body>
-    <h1>About:Blank Redirector</h1>
-    <input type="text" id="urlInput" placeholder="Enter a URL">
-    <button onclick="redirect()">Go</button>
+    <h1>About:Blank Game Embeder</h1>
+    <input type="text" id="urlInput" placeholder="Enter Game URL">
+    <button onclick="embedGame()">Embed Game</button>
 
     <script>
-        function redirect() {
+        function embedGame() {
             let url = document.getElementById("urlInput").value;
             if (!url.startsWith("http")) {
-                url = "https://" + url; // Ensure valid URL format
+                url = "https://" + url; // Add https:// if it's missing
             }
-            
+
+            // Open a new about:blank window
             let newWindow = window.open("about:blank");
+            // Create an iframe to embed the game
             let iframe = newWindow.document.createElement("iframe");
 
             iframe.style.position = "absolute";
@@ -28,6 +30,7 @@
             iframe.style.border = "none";
             iframe.src = url;
 
+            // Append the iframe to the new window's document body
             newWindow.document.body.appendChild(iframe);
         }
     </script>
