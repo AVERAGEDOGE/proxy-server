@@ -47,15 +47,12 @@
                 return;
             }
 
-            // Ensure HTTPS for security
             if (!url.startsWith("http://") && !url.startsWith("https://")) {
                 url = "https://" + url;
             }
 
-            // Use your Cloudflare Worker to proxy the request
             let proxyUrl = "https://broken-wind-2e35.uraverageopdoge.workers.dev/?url=" + encodeURIComponent(url);
 
-            // Open in about:blank
             let newWindow = window.open("about:blank");
 
             if (!newWindow) {
