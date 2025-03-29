@@ -31,8 +31,9 @@
         button:hover {
             background-color: #0056b3;
         }
-        .status {
+        #status {
             margin-top: 20px;
+            font-size: 18px;
         }
     </style>
 </head>
@@ -41,7 +42,10 @@
     <input type="text" id="urlInput" placeholder="Enter Website URL">
     <button onclick="embedWebsite()">Embed Website</button>
 
-    <div id="status" class="status"></div>
+    <div id="status">
+        <p>Cloudflare Worker Status: <strong>Loading...</strong></p>
+        <p>Last Updated: <strong>Loading...</strong></p>
+    </div>
 
     <script>
         // Function to fetch and display the worker's status
@@ -50,10 +54,14 @@
                 .then(response => response.json())
                 .then(data => {
                     const statusDiv = document.getElementById('status');
-                    statusDiv.innerHTML = `
-                        <p>Cloudflare Worker Status: <strong>${data.status}</strong></p>
-                        <p>Last Updated: <strong>${data.lastUpdated}</strong></p>
-                    `;
+                    if (data.status === "OK") {
+                        statusDiv.innerHTML = `
+                            <p>Cloudflare Worker Status: <strong>${data.status}</strong></p>
+                            <p>Last Updated: <strong>${data.lastUpdated}</strong></p>
+                        `;
+                    } else {
+                        statusDiv.innerHTML = `<p>Error: Worker status not OK</p>`;
+                    }
                 })
                 .catch(error => {
                     const statusDiv = document.getElementById('status');
@@ -64,7 +72,7 @@
         // Call the status check when the page loads
         window.onload = checkWorkerStatus;
 
-        // Embed website function
+        // Function to embed a website using the proxy
         function embedWebsite() {
             let url = document.getElementById("urlInput").value.trim();
 
