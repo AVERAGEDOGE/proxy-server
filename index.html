@@ -31,48 +31,40 @@
         button:hover {
             background-color: #0056b3;
         }
-        #status {
-            margin-top: 20px;
-            font-size: 18px;
-        }
     </style>
 </head>
 <body>
     <h1>Proxy Website</h1>
     <input type="text" id="urlInput" placeholder="Enter Website URL">
     <button onclick="embedWebsite()">Embed Website</button>
-
-    <div id="status">
-        <p>Cloudflare Worker Status: <strong>Loading...</strong></p>
-        <p>Last Updated: <strong>Loading...</strong></p>
-    </div>
+    <h2>Status</h2>
+    <div id="status">Checking status...</div>
 
     <script>
-        // Function to fetch and display the worker's status
-        function checkWorkerStatus() {
-            fetch('https://broken-wind-2e35.uraverageopdoge.workers.dev/status')
-                .then(response => response.json())
-                .then(data => {
-                    const statusDiv = document.getElementById('status');
-                    if (data.status === "OK") {
-                        statusDiv.innerHTML = `
-                            <p>Cloudflare Worker Status: <strong>${data.status}</strong></p>
-                            <p>Last Updated: <strong>${data.lastUpdated}</strong></p>
-                        `;
-                    } else {
-                        statusDiv.innerHTML = `<p>Error: Worker status not OK</p>`;
+        // Fetch status on page load
+        async function fetchStatus() {
+            try {
+                let response = await fetch('https://broken-wind-2e35.uraverageopdoge.workers.dev/status', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
                     }
-                })
-                .catch(error => {
-                    const statusDiv = document.getElementById('status');
-                    statusDiv.innerHTML = `<p>Error fetching worker status: ${error.message}</p>`;
                 });
+
+                // Handle CORS or fetch errors
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch status. Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                document.getElementById("status").innerText = `Status: ${data.status}, Last Updated: ${data.lastUpdated}`;
+            } catch (error) {
+                document.getElementById("status").innerText = `Error fetching status: ${error.message}`;
+            }
         }
 
-        // Call the status check when the page loads
-        window.onload = checkWorkerStatus;
+        fetchStatus();
 
-        // Function to embed a website using the proxy
         function embedWebsite() {
             let url = document.getElementById("urlInput").value.trim();
 
