@@ -31,12 +31,22 @@
         button:hover {
             background-color: #0056b3;
         }
+        #status {
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            display: inline-block;
+            max-width: 80%;
+        }
     </style>
 </head>
 <body>
     <h1>Proxy Website</h1>
     <input type="text" id="urlInput" placeholder="Enter Website URL">
     <button onclick="embedWebsite()">Embed Website</button>
+
     <h2>Status</h2>
     <div id="status">Checking status...</div>
 
@@ -63,7 +73,7 @@
             }
         }
 
-        fetchStatus();
+        fetchStatus();  // Call fetchStatus on page load
 
         function embedWebsite() {
             let url = document.getElementById("urlInput").value.trim();
