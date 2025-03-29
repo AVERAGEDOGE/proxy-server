@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About:Blank Embedder</title>
+    <title>Proxy</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -34,7 +34,7 @@
     </style>
 </head>
 <body>
-    <h1>About:Blank Website Embedder</h1>
+    <h1>Proxy Website</h1>
     <input type="text" id="urlInput" placeholder="Enter Website URL">
     <button onclick="embedWebsite()">Embed Website</button>
 
@@ -47,12 +47,15 @@
                 return;
             }
 
+            // Ensure HTTPS for security
             if (!url.startsWith("http://") && !url.startsWith("https://")) {
                 url = "https://" + url;
             }
 
+            // Use your Cloudflare Worker to proxy the request
             let proxyUrl = "https://broken-wind-2e35.uraverageopdoge.workers.dev/?url=" + encodeURIComponent(url);
 
+            // Open in about:blank
             let newWindow = window.open("about:blank");
 
             if (!newWindow) {
@@ -69,6 +72,12 @@
             iframe.style.border = "none";
 
             iframe.src = proxyUrl;
+
+            newWindow.document.body.appendChild(iframe);
+        }
+    </script>
+</body>
+</html>
 
             newWindow.document.body.appendChild(iframe);
         }
