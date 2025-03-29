@@ -31,6 +31,9 @@
         button:hover {
             background-color: #0056b3;
         }
+        .status {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -38,7 +41,30 @@
     <input type="text" id="urlInput" placeholder="Enter Website URL">
     <button onclick="embedWebsite()">Embed Website</button>
 
+    <div id="status" class="status"></div>
+
     <script>
+        // Function to fetch and display the worker's status
+        function checkWorkerStatus() {
+            fetch('https://broken-wind-2e35.uraverageopdoge.workers.dev/status')
+                .then(response => response.json())
+                .then(data => {
+                    const statusDiv = document.getElementById('status');
+                    statusDiv.innerHTML = `
+                        <p>Cloudflare Worker Status: <strong>${data.status}</strong></p>
+                        <p>Last Updated: <strong>${data.lastUpdated}</strong></p>
+                    `;
+                })
+                .catch(error => {
+                    const statusDiv = document.getElementById('status');
+                    statusDiv.innerHTML = `<p>Error fetching worker status: ${error.message}</p>`;
+                });
+        }
+
+        // Call the status check when the page loads
+        window.onload = checkWorkerStatus;
+
+        // Embed website function
         function embedWebsite() {
             let url = document.getElementById("urlInput").value.trim();
 
