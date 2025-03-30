@@ -39,7 +39,7 @@
     <h1>Cloudflare Proxy</h1>
     <p>Enter a URL to access through the proxy:</p>
     
-    <input type="text" id="urlInput" placeholder="https://example.com">
+    <input type="text" id="urlInput" placeholder="example.com">
     <button onclick="openProxy()">Go</button>
     
     <h2>Proxy Status</h2>
@@ -55,8 +55,8 @@
                 return;
             }
 
-            // Ensure URL is properly formatted
-            if (!/^https?:\/\//i.test(url)) {
+            // Auto add HTTPS if not provided
+            if (!url.startsWith("http://") && !url.startsWith("https://")) {
                 url = "https://" + url;
             }
 
