@@ -65,7 +65,7 @@
 
         async function checkProxyStatus() {
             try {
-                const response = await fetch(proxyBase, { method: "HEAD" });
+                const response = await fetch(proxyBase + "https://example.com", { method: "GET" });
                 if (response.ok) {
                     document.getElementById("status").textContent = "Proxy is Online ✅";
                     document.getElementById("status").style.color = "green";
