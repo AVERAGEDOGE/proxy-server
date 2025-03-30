@@ -1,51 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>URL Proxy</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f0f0f0;
-    }
-    .container {
-      text-align: center;
-    }
-    input[type="text"] {
-      padding: 10px;
-      width: 300px;
-      margin-bottom: 10px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxy Server</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        input {
+            width: 60%;
+            padding: 10px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #status {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>Proxy URL</h1>
-    <input type="text" id="urlInput" placeholder="Enter URL (e.g., example.com)">
-    <button onclick="sendRequest()">Proxy</button>
+    <h1>Cloudflare Proxy</h1>
+    <p>Enter a URL to access through the proxy:</p>
+    
+    <input type="text" id="urlInput" placeholder="https://example.com">
+    <button onclick="openProxy()">Go</button>
+    
+    <h2>Proxy Status</h2>
+    <p id="status">Checking...</p>
 
-    <p id="response"></p>
-  </div>
+    <script>
+        const proxyBase = "https://broken-wind-2e35.uraverageopdoge.workers.dev/";
 
-  <script src="app.js"></script>
-</body>
-</html>
+        function openProxy() {
+            let url = document.getElementById("urlInput").value.trim();
+            if (!url) {
+                alert("Please enter a valid URL.");
+                return;
+            }
 
-        // Call the checkStatus function when the page loads
-        window.onload = checkStatus;
+            // Ensure URL is properly formatted
+            if (!/^https?:\/\//i.test(url)) {
+                url = "https://" + url;
+            }
+
+            window.location.href = proxyBase + url;
+        }
+
+        async function checkProxyStatus() {
+            try {
+                const response = await fetch(proxyBase, { method: "HEAD" });
+                if (response.ok) {
+                    document.getElementById("status").textContent = "Proxy is Online ✅";
+                    document.getElementById("status").style.color = "green";
+                } else {
+                    throw new Error("Proxy is down");
+                }
+            } catch (error) {
+                document.getElementById("status").textContent = "Proxy is Offline ❌";
+                document.getElementById("status").style.color = "red";
+            }
+        }
+
+        checkProxyStatus();
     </script>
+
 </body>
 </html>
