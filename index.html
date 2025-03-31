@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proxy Server</title>
+    <title>Proxy Server - Checking...</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -64,21 +64,28 @@
         }
 
         async function checkProxyStatus() {
+            const start = performance.now();
             try {
                 const response = await fetch(proxyBase + "https://example.com", { method: "GET" });
+                const end = performance.now();
+                const latency = Math.round(end - start);
+                
                 if (response.ok) {
                     document.getElementById("status").textContent = "Proxy is Online ✅";
                     document.getElementById("status").style.color = "green";
+                    document.title = `Proxy Server - Online (${latency}ms)`;
                 } else {
                     throw new Error("Proxy is down");
                 }
             } catch (error) {
                 document.getElementById("status").textContent = "Proxy is Offline ❌";
                 document.getElementById("status").style.color = "red";
+                document.title = "Proxy Server - Offline";
             }
         }
 
         checkProxyStatus();
+        setInterval(checkProxyStatus, 5000);
     </script>
 
 </body>
