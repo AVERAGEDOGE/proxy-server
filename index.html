@@ -60,16 +60,12 @@
                 url = "https://" + url;
             }
 
-            const proxiedUrl = proxyBase + url;
-
-            // Open in about:blank to bypass iframe restrictions
-            const newWindow = window.open();
-            newWindow.document.write(`<iframe src="${proxiedUrl}" style="width:100vw; height:100vh; border:none;"></iframe>`);
+            window.location.href = proxyBase + "/" + encodeURIComponent(url);
         }
 
         async function checkProxyStatus() {
             try {
-                const response = await fetch(proxyBase + "https://example.com", { method: "GET" });
+                const response = await fetch(proxyBase + "/https://example.com", { method: "GET" });
                 if (response.ok) {
                     document.getElementById("status").textContent = "Proxy is Online ✅";
                     document.getElementById("status").style.color = "green";
