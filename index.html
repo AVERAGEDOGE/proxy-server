@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proxy Server - Checking...</title>
+    <title>Proxy Server</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -60,52 +60,29 @@
                 url = "https://" + url;
             }
 
-            // Convert YouTube links to embedded versions
-            if (url.includes("youtube.com/watch?v=")) {
-                url = url.replace("youtube.com/watch?v=", "youtube.com/embed/");
-            }
+            const proxiedUrl = proxyBase + url;
 
-            // Open inside about:blank
-            let embedWindow = window.open("about:blank");
-            let iframe = embedWindow.document.createElement("iframe");
-            
-            iframe.style.position = "fixed";
-            iframe.style.top = "0";
-            iframe.style.left = "0";
-            iframe.style.width = "100vw";
-            iframe.style.height = "100vh";
-            iframe.style.border = "none";
-            iframe.sandbox = "allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts";
-
-            iframe.src = proxyBase + url;
-
-            embedWindow.document.body.style.margin = "0";
-            embedWindow.document.body.appendChild(iframe);
+            // Open in about:blank to bypass iframe restrictions
+            const newWindow = window.open();
+            newWindow.document.write(`<iframe src="${proxiedUrl}" style="width:100vw; height:100vh; border:none;"></iframe>`);
         }
 
         async function checkProxyStatus() {
-            const start = performance.now();
             try {
                 const response = await fetch(proxyBase + "https://example.com", { method: "GET" });
-                const end = performance.now();
-                const latency = Math.round(end - start);
-                
                 if (response.ok) {
                     document.getElementById("status").textContent = "Proxy is Online ✅";
                     document.getElementById("status").style.color = "green";
-                    document.title = `Proxy Server - Online (${latency}ms)`;
                 } else {
                     throw new Error("Proxy is down");
                 }
             } catch (error) {
                 document.getElementById("status").textContent = "Proxy is Offline ❌";
                 document.getElementById("status").style.color = "red";
-                document.title = "Proxy Server - Offline";
             }
         }
 
         checkProxyStatus();
-        setInterval(checkProxyStatus, 5000);
     </script>
 
 </body>
