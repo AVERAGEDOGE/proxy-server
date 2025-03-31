@@ -60,7 +60,12 @@
                 url = "https://" + url;
             }
 
-            // Open inside about:blank cloaked embedder
+            // Convert YouTube links to embedded versions
+            if (url.includes("youtube.com/watch?v=")) {
+                url = url.replace("youtube.com/watch?v=", "youtube.com/embed/");
+            }
+
+            // Open inside about:blank
             let embedWindow = window.open("about:blank");
             let iframe = embedWindow.document.createElement("iframe");
             
@@ -72,18 +77,10 @@
             iframe.style.border = "none";
             iframe.sandbox = "allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts";
 
-            // Proxy the URL inside iframe
             iframe.src = proxyBase + url;
 
-            // Hide browser traces
-            embedWindow.document.title = "Loading...";
             embedWindow.document.body.style.margin = "0";
             embedWindow.document.body.appendChild(iframe);
-
-            // Spoof Referer and User-Agent (optional)
-            setTimeout(() => {
-                embedWindow.document.title = "Browsing Securely";
-            }, 2000);
         }
 
         async function checkProxyStatus() {
