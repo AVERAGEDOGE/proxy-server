@@ -60,25 +60,32 @@
                 url = "https://" + url;
             }
 
-            window.location.href = proxyBase + "/" + encodeURIComponent(url);
+            window.location.href = proxyBase + encodeURIComponent(url);
         }
 
         async function checkProxyStatus() {
+            const startTime = performance.now();
             try {
-                const response = await fetch(proxyBase + "/https://example.com", { method: "GET" });
+                const response = await fetch(proxyBase + "https://example.com", { method: "GET" });
+                const latency = Math.round(performance.now() - startTime);
+
                 if (response.ok) {
-                    document.getElementById("status").textContent = "Proxy is Online ✅";
+                    document.getElementById("status").textContent = `Proxy is Online ✅ - ${latency}ms`;
                     document.getElementById("status").style.color = "green";
+                    document.title = `Proxy Online - ${latency}ms`;
                 } else {
                     throw new Error("Proxy is down");
                 }
             } catch (error) {
                 document.getElementById("status").textContent = "Proxy is Offline ❌";
                 document.getElementById("status").style.color = "red";
+                document.title = "Proxy Offline ❌";
             }
         }
 
+        // Check status every 10 seconds
         checkProxyStatus();
+        setInterval(checkProxyStatus, 10000);
     </script>
 
 </body>
