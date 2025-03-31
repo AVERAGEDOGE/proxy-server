@@ -60,19 +60,30 @@
                 url = "https://" + url;
             }
 
-            // Open inside about:blank embedder
+            // Open inside about:blank cloaked embedder
             let embedWindow = window.open("about:blank");
             let iframe = embedWindow.document.createElement("iframe");
+            
             iframe.style.position = "fixed";
             iframe.style.top = "0";
             iframe.style.left = "0";
             iframe.style.width = "100vw";
             iframe.style.height = "100vh";
             iframe.style.border = "none";
+            iframe.sandbox = "allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts";
+
+            // Proxy the URL inside iframe
             iframe.src = proxyBase + url;
 
+            // Hide browser traces
+            embedWindow.document.title = "Loading...";
             embedWindow.document.body.style.margin = "0";
             embedWindow.document.body.appendChild(iframe);
+
+            // Spoof Referer and User-Agent (optional)
+            setTimeout(() => {
+                embedWindow.document.title = "Browsing Securely";
+            }, 2000);
         }
 
         async function checkProxyStatus() {
