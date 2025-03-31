@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proxy Server</title>
+    <title>Proxy Server - Checking...</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -32,31 +32,36 @@
             margin-top: 20px;
             font-weight: bold;
         }
-        iframe {
-            margin-top: 20px;
-            width: 100%;
-            height: 600px;
-            border: none;
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            display: none;
+            margin-top: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
 
     <h1>Cloudflare Proxy</h1>
-    <p>Enter the URL to access through the proxy:</p>
+    <p>Enter a URL to access through the proxy:</p>
     
     <input type="text" id="urlInput" placeholder="example.com">
     <button onclick="openProxy()">Go</button>
     
-    <h2>Proxy Status</h2>
-    <p id="status">Checking...</p>
-
-    <iframe id="proxyFrame" src="about:blank"></iframe>
+    <div id="status">Checking...</div>
+    <div class="loader" id="loadingSpinner"></div>
 
     <script>
         const proxyBase = "https://broken-wind-2e35.uraverageopdoge.workers.dev/";
 
-        // Open the URL in an iframe inside the about:blank page
         function openProxy() {
             let url = document.getElementById("urlInput").value.trim();
             if (!url) {
@@ -64,34 +69,66 @@
                 return;
             }
 
+            // Show loading spinner
+            document.getElementById("loadingSpinner").style.display = "inline-block";
+
             // Auto add HTTPS if not provided
             if (!url.startsWith("http://") && !url.startsWith("https://")) {
                 url = "https://" + url;
             }
 
-            // Set the iframe source to the Cloudflare Worker proxy, which will embed the URL
-            document.getElementById("proxyFrame").src = proxyBase + encodeURIComponent(url);
+            // Open inside about:blank cloaked embedder
+            let embedWindow = window.open("about:blank");
+            let iframe = embedWindow.document.createElement("iframe");
+            
+            iframe.style.position = "fixed";
+            iframe.style.top = "0";
+            iframe.style.left = "0";
+            iframe.style.width = "100vw";
+            iframe.style.height = "100vh";
+            iframe.style.border = "none";
+            iframe.sandbox = "allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts";
+
+            // Proxy the URL inside iframe
+            iframe.src = proxyBase + encodeURIComponent(url);
+
+            // Hide browser traces
+            embedWindow.document.title = "Loading...";
+            embedWindow.document.body.style.margin = "0";
+            embedWindow.document.body.appendChild(iframe);
+
+            // Spoof Referer and User-Agent (optional)
+            setTimeout(() => {
+                embedWindow.document.title = "Browsing Securely";
+            }, 2000);
         }
 
-        // Check if the proxy server is online and update the status
         async function checkProxyStatus() {
+            const start = performance.now();
             try {
-                const response = await fetch(proxyBase + "/status", { method: "GET" });
-                const data = await response.json();
+                const response = await fetch(proxyBase + "https://example.com", { method: "GET" });
+                const end = performance.now();
+                const latency = Math.round(end - start);
+                
                 if (response.ok) {
-                    document.getElementById("status").textContent = `Proxy is Online ✅ - Latency: ${data.latency}`;
+                    document.getElementById("status").textContent = "Proxy is Online ✅";
                     document.getElementById("status").style.color = "green";
+                    document.title = `Proxy Server - Online (${latency}ms)`;
                 } else {
                     throw new Error("Proxy is down");
                 }
             } catch (error) {
                 document.getElementById("status").textContent = "Proxy is Offline ❌";
                 document.getElementById("status").style.color = "red";
+                document.title = "Proxy Server - Offline";
             }
+
+            // Hide loading spinner
+            document.getElementById("loadingSpinner").style.display = "none";
         }
 
-        // Run status check on page load
         checkProxyStatus();
+        setInterval(checkProxyStatus, 5000);
     </script>
 
 </body>
